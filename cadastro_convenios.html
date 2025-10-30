@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Cadastro de Convênio</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <style>
+    body {
+      background-color: #f7f9fb;
+    }
+    .card {
+      border-radius: 10px;
+    }
+    h2 {
+      color: #0d6efd;
+    }
+  </style>
+</head>
+<body class="p-4">
+
+  <div class="container">
+    <h2 class="mb-4 text-center">Cadastro de Convênio</h2>
+
+    <div id="alertMsg"></div>
+
+    <form id="formConvenio" class="card p-4 shadow-sm" method="POST" action="salvar_convenio.php">
+      <div class="row mb-3">
+        <div class="col-md-6">
+          <label class="form-label">Data de Início <span class="text-danger">*</span></label>
+          <input type="date" class="form-control" name="data_inicio" required>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Data de Fim <span class="text-danger">*</span></label>
+          <input type="date" class="form-control" name="data_fim" required>
+        </div>
+      </div>
+
+      <div class="row mb-3">
+        <div class="col-md-6">
+          <label class="form-label">Status</label>
+          <select class="form-select" name="status" required>
+            <option value="Ativo">Ativo</option>
+            <option value="Inativo">Inativo</option>
+            <option value="Em negociação">Em negociação</option>
+          </select>
+        </div>
+
+        <div class="col-md-6">
+          <label class="form-label">Empresa <span class="text-danger">*</span></label>
+          <select class="form-select" name="idempresa" id="selectEmpresa" required>
+            <option value="">Carregando empresas...</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="row mb-3">
+        <div class="col-md-6">
+          <label class="form-label">Curso <span class="text-danger">*</span></label>
+          <select class="form-select" name="idcurso" id="selectCurso" required>
+            <option value="">Carregando cursos...</option>
+          </select>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Observação</label>
+          <textarea class="form-control" name="observacao" rows="2" placeholder="Digite observações sobre o convênio..."></textarea>
+        </div>
+      </div>
+
+      <div class="text-end">
+        <button type="submit" class="btn btn-primary">Salvar Convênio</button>
+        <button type="reset" class="btn btn-secondary"></button>Limpar</button>
+      </div>
+    </form>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      const empresaSelect = document.getElementById('selectEmpresa');
+      const cursoSelect = document.getElementById('selectCurso');
+      const alertMsg = document.getElementById('alertMsg');
+
+      // Função para mostrar mensagens de status
+      const showAlert = (msg, type = 'success') => {
+        alertMsg.innerHTML = `
+          <div class="alert alert-${type} alert-dismissible fade show" role="alert">
+            ${msg}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+          </div>`;
+      };
+
+      try {
+        // Carregar empresas
+        const empresas = await fetch('api_empresas.php').then(r => r.json());
+        empresaSelect.innerHTML = '<option value="">Selecione a empresa</option>';
+        empresas.forEach(emp => {
+          const opt = document.createElement('option');
+          opt.value = emp.id_empresa;
+          opt.textContent = emp.nome_fantasia || emp.nome_razao;
+          empresaSelect.appendChild(opt);
+        });
+
+        // Carregar cursos
+        const cursos = await fetch('api_cursos.php').then(r => r.json());
+        cursoSelect.innerHTML = '<option value="">Selecione o curso</option>';
+        cursos.forEach(curso => {
+          const opt = document.createElement('option');
+          opt.value = curso.id_curso;
+          opt.textContent = curso.nome;
+          cursoSelect.appendChild(opt);
+        });
+      } catch (err) {
+        showAlert('Erro ao carregar empresas ou cursos.', 'danger');
+      }
+
+      // Validação extra antes de enviar
+      document.getElementById('formConvenio').addEventListener('submit', (e) => {
+        const inicio = new Date(document.querySelector('[name="data_inicio"]').value);
+        const fim = new Date(document.querySelector('[name="data_fim"]').value);
+        if (inicio > fim) {
+          e.preventDefault();
+          showAlert('A data de fim deve ser posterior à data de início.', 'warning');
+        }
+      });
+    });
+  </script>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
