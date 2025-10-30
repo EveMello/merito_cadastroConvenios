@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Cadastro de Convênio</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <style>
+    body {
+      background-color: #f7f9fb;
+    }
+    .card {
+      border-radius: 10px;
+    }
+    h2 {
+      color: #0d6efd;
+    }
+  </style>
+</head>
+<body class="p-4">
+
+<div class="container">
+  <h2 class="mb-4 text-center">Cadastro de Convênio</h2>
+
+  <div id="alertMsg"></div>
+
+  <form id="formConvenio" class="card p-4 shadow-sm" method="POST" action="salvar_convenio.php">
+    <div class="row mb-3">
+      <div class="col-md-6">
+        <label class="form-label">Data de Início <span class="text-danger">*</span></label>
+        <input type="date" class="form-control" name="data_inicio" required>
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Data de Fim <span class="text-danger">*</span></label>
+        <input type="date" class="form-control" name="data_fim" required>
+      </div>
+    </div>
+
+    <div class="row mb-3">
+      <div class="col-md-5">
+        <label class="form-label">Status</label>
+        <select class="form-select" name="status" required>
+          <option value="Ativo">Ativo</option>
+          <option value="Inativo">Inativo</option>
+          <option value="Em negociação">Em negociação</option>
+        </select>
+      </div>
+
+      <div class="col-md-5">
+        <label class="form-label">Empresa <span class="text-danger">*</span></label>
+        <select class="form-select" name="idempresa" id="selectEmpresa" required>
+          <option value="">Carregando empresas...</option>
+        </select>
+      </div>
+
+      <div class="col-md-2 d-flex align-items-end">
+        <button type="button" class="btn btn-success w-100" data-bs-toggle="modal" data-bs-target="#modalEmpresa">
+          + Cadastrar
+        </button>
+      </div>
+    </div>
+
+    <div class="row mb-3">
+      <div class="col-md-6">
+        <label class="form-label">Curso <span class="text-danger">*</span></label>
+        <select class="form-select" name="idcurso" id="selectCurso" required>
+          <option value="">Carregando cursos...</option>
+        </select>
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Observação</label>
+        <textarea class="form-control" name="observacao" rows="2" placeholder="Digite observações sobre o convênio..."></textarea>
+      </div>
+    </div>
+
+    <div class="text-end">
+      <button type="submit" class="btn btn-primary">Salvar Convênio</button>
+      <button type="reset" class="btn btn-secondary">Limpar</button>
+    </div>
+  </form>
+</div>
+
+<!-- MODAL CADASTRAR EMPRESA -->
+<div class="modal fade" id="modalEmpresa" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg">
+    <div class="modal-content">
+      <form id="formEmpresa" method="POST" action="salvar_empresa.php">
+        <div class="modal-header">
+          <h5 class="modal-title">Cadastrar Empresa</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div id="alertEmpresa"></div>
+
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Nome/Razão Social <span class="text-danger">*</span></label>
+              <input type="text" class="form-control" name="nome_razao" required>
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Nome Fantasia</label>
+              <input type="text" class="form-control" name="nome_fantasia">
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-4 mb-3">
+              <label class="form-label">CNPJ</label>
+              <input type="text" class="form-control" name="cnpj" maxlength="18">
+            </div>
+            <div class="col-md-4 mb-3">
+              <label class="form-label">Telefone</label>
+              <input type="text" class="form-control" name="telefone">
+            </div>
+            <div class="col-md-4 mb-3">
+              <label class="form-label">E-mail</label>
+              <input type="email" class="form-control" name="email">
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Endereço</label>
+            <input type="text" class="form-control" name="endereco">
+          </div>
+
+          <div class="row">
+            <div class="col-md-4 mb-3">
+              <label class="form-label">Campus</label>
+              <select class="form-select" name="nome_campus">
+                <option value="">Selecione</option>
+                <option value="Campus A">Campus A</option>
+                <option value="Campus B">Campus B</option>
+                <option value="Campus C">Campus C</option>
+              </select>
+            </div>
+            <div class="col-md-4 mb-3">
+              <label class="form-label">Cidade (ID)</label>
+              <input type="number" class="form-control" name="id_cidade">
+            </div>
+            <div class="col-md-4 mb-3">
+              <label class="form-label">Vagas (ID)</label>
+              <input type="number" class="form-control" name="idvagas">
+            </div>
+          </div>
+
+          <hr>
+          <h6>Representante</h6>
+          <div class="row">
+            <div class="col-md-4 mb-3">
+              <label class="form-label">Nome</label>
+              <input type="text" class="form-control" name="nome_representante">
+            </div>
+            <div class="col-md-4 mb-3">
+              <label class="form-label">CPF</label>
+              <input type="text" class="form-control" name="cpf_representante">
+            </div>
+            <div class="col-md-4 mb-3">
+              <label class="form-label">Telefone</label>
+              <input type="text" class="form-control" name="telefone_representante">
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label">E-mail</label>
+              <input type="email" class="form-control" name="email_representante">
+            </div>
+          </div>
+
+          <hr>
+          <h6>Contato</h6>
+          <div class="row">
+            <div class="col-md-4 mb-3">
+              <label class="form-label">Nome</label>
+              <input type="text" class="form-control" name="nome_contato">
+            </div>
+            <div class="col-md-4 mb-3">
+              <label class="form-label">CPF</label>
+              <input type="text" class="form-control" name="cpf_contato">
+            </div>
+            <div class="col-md-4 mb-3">
+              <label class="form-label">Telefone</label>
+              <input type="text" class="form-control" name="telefone_contato">
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label">E-mail</label>
+              <input type="email" class="form-control" name="email_contato">
+            </div>
+          </div>
+
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-success">Salvar</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', async () => {
+  const empresaSelect = document.getElementById('selectEmpresa');
+  const cursoSelect = document.getElementById('selectCurso');
+  const alertMsg = document.getElementById('alertMsg');
+  const alertEmpresa = document.getElementById('alertEmpresa');
+
+  const showAlert = (msg, type = 'success', target = alertMsg) => {
+    target.innerHTML = `
+      <div class="alert alert-${type} alert-dismissible fade show" role="alert">
+        ${msg}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+      </div>`;
+  };
+
+  async function carregarEmpresas() {
+    try {
+      const empresas = await fetch('api_empresas.php').then(r => r.json());
+      empresaSelect.innerHTML = '<option value="">Selecione a empresa</option>';
+      empresas.forEach(emp => {
+        const opt = document.createElement('option');
+        opt.value = emp.id_empresa;
+        opt.textContent = emp.nome_fantasia || emp.nome_razao;
+        empresaSelect.appendChild(opt);
+      });
+    } catch {
+      showAlert('Erro ao carregar empresas.', 'danger');
+    }
+  }
+
+  async function carregarCursos() {
+    try {
+      const cursos = await fetch('api_cursos.php').then(r => r.json());
+      cursoSelect.innerHTML = '<option value="">Selecione o curso</option>';
+      cursos.forEach(curso => {
+        const opt = document.createElement('option');
+        opt.value = curso.id_curso;
+        opt.textContent = curso.nome;
+        cursoSelect.appendChild(opt);
+      });
+    } catch {
+      showAlert('Erro ao carregar cursos.', 'danger');
+    }
+  }
+
+  await carregarEmpresas();
+  await carregarCursos();
+
+  // Validação de datas
+  document.getElementById('formConvenio').addEventListener('submit', (e) => {
+    const inicio = new Date(document.querySelector('[name="data_inicio"]').value);
+    const fim = new Date(document.querySelector('[name="data_fim"]').value);
+    if (inicio > fim) {
+      e.preventDefault();
+      showAlert('A data de fim deve ser posterior à data de início.', 'warning');
+    }
+  });
+
+  // Cadastro de empresa via AJAX
+  document.getElementById('formEmpresa').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    try {
+      const response = await fetch('salvar_empresa.php', {
+        method: 'POST',
+        body: formData
+      });
+      const result = await response.json();
+
+      if (result.success) {
+        showAlert('Empresa cadastrada com sucesso!', 'success', alertEmpresa);
+        await carregarEmpresas();
+        empresaSelect.value = result.id_empresa;
+        setTimeout(() => {
+          const modal = bootstrap.Modal.getInstance(document.getElementById('modalEmpresa'));
+          modal.hide();
+          e.target.reset();
+          alertEmpresa.innerHTML = '';
+        }, 1000);
+      } else {
+        showAlert(result.message || 'Erro ao cadastrar empresa.', 'danger', alertEmpresa);
+      }
+    } catch {
+      showAlert('Erro ao enviar dados da empresa.', 'danger', alertEmpresa);
+    }
+  });
+});
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
